@@ -4,7 +4,7 @@
     var App = {
         isLoading: true,
         visibleCards: {},
-        selectedCities: {},
+        selectedCities: [],
         spinner: document.querySelector('.loader'),
         cardTemplate: document.querySelector('.cardTemplate'),
         addDialog: document.querySelector('.dialog-container'),
@@ -13,14 +13,19 @@
     };
 
     document.getElementById('butRefresh').addEventListener('click', function () {
-        App.getForecast('Phoenix', 'Phoenix');
+        App.updateForcasts();
     });
     document.getElementById('butAdd').addEventListener('click', function () {
-        App.addDialog.removeAttribute('hidden');
-        App.updateForecastCard();
+        App.toggleAddDialog(true);
     });
     document.getElementById('butAddCity').addEventListener('click', function () {
-        App.toggleAddDialog(true);
+        var select = document.getElementById('selectCityToAdd');
+        var selected = select.options[select.selectedIndex];
+        var key = selected.value;
+        var label = selected.textContent;
+        App.getForecast(key, label);
+        App.selectedCities.push({key: key, label: label});
+        App.toggleAddDialog(false);
     });
     document.getElementById('butAddCancel').addEventListener('click', function () {
         App.toggleAddDialog(false);
@@ -95,11 +100,18 @@
         request.send();
     };
 
-    App.toggleAddDialog = function (visible) {
-        if (visible) {
-            App.addDialog.add('dialog-container--visible');
+    App.updateForcasts = function(){
+        var keys = Object.keys(App.visibleCards);
+        keys.forEach(function(key){
+            App.getForecast(key);
+        });
+    };
+
+    App.toggleAddDialog = function (isVisible) {
+        if (isVisible) {
+            App.addDialog.classList.add('dialog-container--visible');
         } else {
-            App.addDialog.remove('dialog-container--visible');
+            App.addDialog.classList.remove('dialog-container--visible');
         }
     };
 
