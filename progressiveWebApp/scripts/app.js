@@ -32,16 +32,10 @@
     });
 
     App.updateForecastCard = function (data) {
-        //TODO:AMUNOZ remove this later
-        if(!data){
-            App.spinner.setAttribute('hidden', true);
-            App.container.removeAttribute('hidden');
-            App.isLoading = false;
-            return;
-        }
+
         var card = App.visibleCards[data.key];
-        if(!card){
-           card = App.cardTemplate.cloneNode(true);
+        if (!card) {
+            card = App.cardTemplate.cloneNode(true);
             card.classList.remove('cardTemplate');
             card.querySelector('.location').textContent = data.label;
             card.removeAttribute('hidden');
@@ -62,11 +56,11 @@
         var nextDays = card.querySelectorAll('.future .oneday');
         var today = new Date().getDay();
 
-        for(var i = 0; i < 7; i++){
+        for (var i = 0; i < 7; i++) {
             var nextDay = nextDays[i];
             var daily = data.daily.data[i];
 
-            if(nextDay && daily){
+            if (nextDay && daily) {
                 nextDay.querySelector('.date').textContent = App.daysOfWeek[(today + i) % 7];
                 nextDay.querySelector('.icon').classList.add(daily.icon);
                 nextDay.querySelector('.temp-high .value').textContent = daily.temperatureMax;
@@ -93,6 +87,7 @@
                     response.label = label;
                     App.hasRequestPending = false;
                     App.updateForecastCard(response);
+                    App.saveSelectedCities();
                 }
             }
         };
@@ -100,11 +95,29 @@
         request.send();
     };
 
-    App.updateForcasts = function(){
+    App.updateForcasts = function () {
+        //TODO:AMUNOZ remove this later
+            App.spinner.setAttribute('hidden', true);
+            App.container.removeAttribute('hidden');
+            App.isLoading = false;
+
         var keys = Object.keys(App.visibleCards);
-        keys.forEach(function(key){
-            App.getForecast(key);
-        });
+        //TODO:AMUNOZ upgrade localstorage to IDB
+        App.selectedCities = localStorage.selectedCities || [];
+        if (App.selectedCities.length) {
+            var selectedCities = JSON.parse(App.selectedCities) || [];
+            selectedCities.forEach(function (city) {
+                App.getForecast(city.key, city.label);
+            });
+        } else {
+            keys.forEach(function (key) {
+                App.getForecast(key);
+            });
+        }
+    };
+
+    App.saveSelectedCities = function () {
+        localStorage.selectedCities = JSON.stringify(App.selectedCities);
     };
 
     App.toggleAddDialog = function (isVisible) {
@@ -115,7 +128,7 @@
         }
     };
 
-    App.updateForecastCard();
+    App.updateForcasts();
     Window.App = App;
 
 })();
