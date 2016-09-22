@@ -1,0 +1,22 @@
+{
+  "name": "progressiveWebApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndJustisForAll/WebFundamentals"
+  },
+  "author": "Angel Munoz Del Villar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndJustisForAll/WebFundamentals/issues"
+  },
+  "homepage": "https://github.com/AndJustisForAll/WebFundamentals",
+  "devDependencies": {
+    "idb": "^1.1.4"
+  }
+}

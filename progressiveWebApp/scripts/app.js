@@ -1,4 +1,4 @@
-(function () {
+(function (keyvalStore) {
     'use strict';
 
     var App = {
@@ -96,28 +96,25 @@
     };
 
     App.updateForcasts = function () {
-        //TODO:AMUNOZ remove this later
-            App.spinner.setAttribute('hidden', true);
-            App.container.removeAttribute('hidden');
-            App.isLoading = false;
-
         var keys = Object.keys(App.visibleCards);
-        //TODO:AMUNOZ upgrade localstorage to IDB
-        App.selectedCities = localStorage.selectedCities || [];
-        if (App.selectedCities.length) {
-            var selectedCities = JSON.parse(App.selectedCities) || [];
+        keyvalStore.get('selectedCities').then(function (cities) {
+            var selectedCities = cities || [];
             selectedCities.forEach(function (city) {
                 App.getForecast(city.key, city.label);
             });
-        } else {
+        }, function () {
             keys.forEach(function (key) {
                 App.getForecast(key);
             });
-        }
+        });
+        App.spinner.setAttribute('hidden', true);
+        App.container.removeAttribute('hidden');
+        App.isLoading = false;
     };
 
     App.saveSelectedCities = function () {
-        localStorage.selectedCities = JSON.stringify(App.selectedCities);
+        keyvalStore.set('selectedCities', App.selectedCities);
+        //localStorage.selectedCities = JSON.stringify(App.selectedCities);
     };
 
     App.toggleAddDialog = function (isVisible) {
@@ -131,4 +128,4 @@
     App.updateForcasts();
     Window.App = App;
 
-})();
+})(Window.idbKeyval);
